@@ -1,0 +1,130 @@
+{
+  "@@locale": "id",
+  "appTitle": "Brass Tuner",
+  "@appTitle": {
+    "description": "Nama aplikasi"
+  },
+  "settingsTitle": "Pengaturan",
+  "calibrationTitle": "Kalibrasi A4",
+  "calibrationHint": "Frekuensi referensi nada A4. Standar umum 440 Hz; beberapa orkestra memakai 442 Hz.",
+  "resetA4": "Kembalikan ke 440 Hz",
+  "decreaseA4": "Turunkan A4",
+  "increaseA4": "Naikkan A4",
+  "a4Value": "A4 = {hz} Hz",
+  "@a4Value": {
+    "placeholders": {
+      "hz": {
+        "type": "String"
+      }
+    }
+  },
+  "instrumentTitle": "Alat musik",
+  "instrumentInKey": "{name} ({key})",
+  "@instrumentInKey": {
+    "description": "Nama alat dan nada dasarnya, mis. Trumpet (B♭)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "concertKey": "concert",
+  "@concertKey": {
+    "description": "Label untuk alat yang tidak transposisi"
+  },
+  "instrumentTrumpet": "Trumpet",
+  "instrumentFlugelhorn": "Flugelhorn",
+  "instrumentBaritoneTrebleClef": "Bariton (kunci G)",
+  "instrumentMellophone": "Mellophone",
+  "instrumentFrenchHorn": "Horn",
+  "instrumentAltoHorn": "Alto horn",
+  "instrumentTrombone": "Trombon",
+  "instrumentEuphoniumBassClef": "Euphonium (kunci F)",
+  "instrumentTuba": "Tuba",
+  "writtenLabel": "Tertulis",
+  "@writtenLabel": {
+    "description": "Nada yang dibaca pemain alat transposisi"
+  },
+  "concertValue": "Concert {note}",
+  "@concertValue": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "playANote": "Mainkan sebuah nada",
+  "startingMic": "Menyiapkan mikrofon…",
+  "micPermissionDenied": "Izin mikrofon ditolak",
+  "micPermissionHint": "Brass Tuner perlu mikrofon untuk mendengar nada Anda. Audio hanya diproses di perangkat ini. Jika dialog izin tidak muncul, aktifkan mikrofon untuk Brass Tuner di Pengaturan perangkat.",
+  "micError": "Mikrofon tidak dapat digunakan. Pastikan tidak sedang dipakai aplikasi lain.",
+  "retry": "Coba lagi",
+  "tabTuner": "Tuner",
+  "tabLongTone": "Nada panjang",
+  "tabDrone": "Drone",
+  "tabMetronome": "Metronom",
+  "play": "Mainkan",
+  "stop": "Hentikan",
+  "volume": "Volume",
+  "droneOctave": "Oktaf {octave}",
+  "@droneOctave": {
+    "placeholders": {
+      "octave": {
+        "type": "int"
+      }
+    }
+  },
+  "lowerOctave": "Turunkan oktaf",
+  "raiseOctave": "Naikkan oktaf",
+  "waveSine": "Sinus",
+  "waveSaw": "Gergaji",
+  "droneWritten": "Tertulis {note}",
+  "@droneWritten": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "droneFeedbackHint": "Saat drone berbunyi dari speaker, tuner ikut mendengarnya. Pakai earphone jika ingin melihat intonasi Anda sendiri.",
+  "droneChip": "Drone {note}",
+  "@droneChip": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "stopDrone": "Hentikan drone",
+  "slower": "Lebih lambat",
+  "faster": "Lebih cepat",
+  "tapTempo": "Ketuk tempo",
+  "beatsPerBar": "{count} ketukan per birama",
+  "@beatsPerBar": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fewerBeats": "Kurangi ketukan",
+  "moreBeats": "Tambah ketukan",
+  "longToneHint": "Tahan sebuah nada untuk mulai merekam",
+  "longToneLive": "Merekam",
+  "longToneLast": "Nada terakhir",
+  "statDuration": "Durasi",
+  "statMean": "Rata-rata",
+  "statStability": "Kestabilan",
+  "statInTune": "Tepat (±5¢)",
+  "secondsValue": "{value} dtk",
+  "@secondsValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  }
+}
