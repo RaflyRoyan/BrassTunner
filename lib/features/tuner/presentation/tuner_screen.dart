@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/pitch/note_mapper.dart';
 import '../../../core/pitch/pitch_tracker.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/ui/practice_quick_controls.dart';
 import '../../../shared/ui/tuning_colors.dart';
+import '../../drone/application/drone_controller.dart';
+import '../../fingering/presentation/fingering_view.dart';
 import '../../settings/application/settings_controller.dart';
 import '../../settings/presentation/instrument_list.dart';
 import '../../settings/presentation/settings_screen.dart';
+import '../application/pitch_trace_controller.dart';
 import '../application/tuner_controller.dart';
 import '../domain/instrument.dart';
 import '../domain/tuning_zone.dart';
 import 'cents_meter.dart';
 import 'instrument_l10n.dart';
+import 'pitch_trace_chart.dart';
+import 'target_picker.dart';
 
 /// Tuner tab. The mic itself is started and stopped by the home shell.
 class TunerPage extends ConsumerWidget {
@@ -72,6 +78,7 @@ class _TunerView extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final settings = ref.watch(settingsProvider);
+    final drone = ref.watch(droneProvider);
     final locale = Localizations.localeOf(context).toLanguageTag();
     final reading = this.reading;
 
@@ -95,18 +102,52 @@ class _TunerView extends ConsumerWidget {
               ),
             ),
           ),
+          const SizedBox(height: 8),
+          const TargetPicker(),
+          const SizedBox(height: 8),
           Expanded(
+            flex: 5,
+            child: Consumer(
+              builder: (context, ref, _) {
+                final trace = ref.watch(pitchTraceProvider);
+                return PitchTraceChart(
+                  trace: trace.trace,
+                  revision: trace.revision,
+                  target: drone.note,
+                  instrument: settings.instrument,
+                  targetSounding: drone.playing,
+                );
+              },
+            ),
+          ),
+          Expanded(
+            flex: 4,
             child: Center(
-              child: reading == null
-                  ? _Waiting(text: starting ? l10n.startingMic : l10n.playANote)
-                  : _NoteDisplay(
-                      reading: reading,
-                      instrument: settings.instrument,
-                    ),
+              // Scales down on short screens instead of overflowing.
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: reading == null
+                    ? _Waiting(
+                        text: starting ? l10n.startingMic : l10n.playANote,
+                      )
+                    : _NoteDisplay(
+                        reading: reading,
+                        instrument: settings.instrument,
+                        target: drone.note,
+                      ),
+              ),
             ),
           ),
           CentsMeter(cents: reading?.note.cents),
-          const SizedBox(height: 12),
+          if (drone.playing)
+            Text(
+              l10n.earphoneHint,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          const SizedBox(height: 4),
           Text(
             reading == null
                 ? '– Hz'
@@ -140,10 +181,25 @@ class _TunerView extends ConsumerWidget {
 }
 
 class _NoteDisplay extends StatelessWidget {
-  const _NoteDisplay({required this.reading, required this.instrument});
+  const _NoteDisplay({
+    required this.reading,
+    required this.instrument,
+    required this.target,
+  });
 
   final TunerReading reading;
   final Instrument instrument;
+
+  /// Target note, concert pitch.
+  final Note target;
+
+  /// Signed text with a U+2212 minus sign, which lines up with the plus.
+  static String _signed(int value) =>
+      '${value > 0
+          ? '+'
+          : value < 0
+          ? '−'
+          : ''}${value.abs()}';
 
   @override
   Widget build(BuildContext context) {
@@ -155,6 +211,7 @@ class _NoteDisplay extends StatelessWidget {
     final rounded = cents.round();
     final zoneColor = tuningZoneColor(TuningZone.of(cents), theme.brightness);
     final muted = theme.colorScheme.onSurfaceVariant;
+    final targetCents = (concert.midi - target.midi) * 100 + cents;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -198,17 +255,31 @@ class _NoteDisplay extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          // U+2212 minus sign lines up with the plus sign.
-          '${rounded > 0
-              ? '+'
-              : rounded < 0
-              ? '−'
-              : ''}${rounded.abs()}¢',
+          '${_signed(rounded)}¢',
           key: const Key('cents'),
           style: theme.textTheme.headlineMedium?.copyWith(
             color: zoneColor,
             fontWeight: FontWeight.w600,
             fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+        ),
+        Text(
+          targetCents.abs() <= 50
+              ? l10n.targetDiffCents(_signed(targetCents.round()))
+              : l10n.targetDiffSemitones(_signed((targetCents / 100).round())),
+          key: const Key('targetDiff'),
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: targetCents.abs() <= 50
+                ? tuningZoneColor(TuningZone.of(targetCents), theme.brightness)
+                : muted,
+          ),
+        ),
+        const SizedBox(height: 12),
+        // Width-bound so the tip wraps inside the FittedBox.
+        SizedBox(
+          width: 320,
+          child: Center(
+            child: FingeringHint(instrument: instrument, note: concert),
           ),
         ),
       ],

@@ -86,6 +86,16 @@ class DroneController extends Notifier<DroneState> {
     ref.read(keyValueStoreProvider).setInt(midiKey, state.midi);
   }
 
+  /// Sets the concert note, clamped to the selectable octaves.
+  void setMidi(int midi) {
+    final clamped = midi.clamp(
+      (DroneState.minOctave + 1) * 12,
+      (DroneState.maxOctave + 2) * 12 - 1,
+    );
+    _update(state.copyWith(midi: clamped));
+    ref.read(keyValueStoreProvider).setInt(midiKey, state.midi);
+  }
+
   void setWaveform(Waveform waveform) {
     _update(state.copyWith(waveform: waveform));
     ref.read(keyValueStoreProvider).setString(waveformKey, waveform.name);
