@@ -14,6 +14,7 @@ class SettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final a4 = ref.watch(settingsProvider.select((s) => s.a4));
+    final themeMode = ref.watch(settingsProvider.select((s) => s.themeMode));
     final controller = ref.read(settingsProvider.notifier);
 
     return Scaffold(
@@ -75,6 +76,33 @@ class SettingsScreen extends ConsumerWidget {
                 onPressed: a4 == 440 ? null : () => controller.setA4(440),
                 child: Text(l10n.resetA4),
               ),
+            ),
+          ),
+          const Divider(height: 32),
+          _SectionTitle(l10n.themeTitle),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SegmentedButton<ThemeMode>(
+              key: const Key('themeMode'),
+              segments: [
+                ButtonSegment(
+                  value: ThemeMode.system,
+                  icon: const Icon(Icons.brightness_auto_outlined),
+                  label: Text(l10n.themeSystem),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.light,
+                  icon: const Icon(Icons.light_mode_outlined),
+                  label: Text(l10n.themeLight),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.dark,
+                  icon: const Icon(Icons.dark_mode_outlined),
+                  label: Text(l10n.themeDark),
+                ),
+              ],
+              selected: {themeMode},
+              onSelectionChanged: (s) => controller.setThemeMode(s.single),
             ),
           ),
           const Divider(height: 32),

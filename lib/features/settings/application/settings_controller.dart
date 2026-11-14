@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/pitch/note_mapper.dart';
@@ -5,24 +6,35 @@ import '../../tuner/domain/instrument.dart';
 import '../data/key_value_store.dart';
 
 class TunerSettings {
-  const TunerSettings({this.a4 = 440, this.instrument = Instrument.trumpet});
+  const TunerSettings({
+    this.a4 = 440,
+    this.instrument = Instrument.trumpet,
+    this.themeMode = ThemeMode.system,
+  });
 
   final double a4;
   final Instrument instrument;
+  final ThemeMode themeMode;
 
-  TunerSettings copyWith({double? a4, Instrument? instrument}) => TunerSettings(
+  TunerSettings copyWith({
+    double? a4,
+    Instrument? instrument,
+    ThemeMode? themeMode,
+  }) => TunerSettings(
     a4: a4 ?? this.a4,
     instrument: instrument ?? this.instrument,
+    themeMode: themeMode ?? this.themeMode,
   );
 
   @override
   bool operator ==(Object other) =>
       other is TunerSettings &&
       other.a4 == a4 &&
-      other.instrument == instrument;
+      other.instrument == instrument &&
+      other.themeMode == themeMode;
 
   @override
-  int get hashCode => Object.hash(a4, instrument);
+  int get hashCode => Object.hash(a4, instrument, themeMode);
 }
 
 /// Must be overridden in `main` with a store opened before `runApp`.
@@ -37,7 +49,8 @@ final settingsProvider = NotifierProvider<SettingsController, TunerSettings>(
 class SettingsController extends Notifier<TunerSettings> {
   static const a4Key = 'a4';
   static const instrumentKey = 'instrument';
-  static const keys = {a4Key, instrumentKey};
+  static const themeModeKey = 'themeMode';
+  static const keys = {a4Key, instrumentKey, themeModeKey};
 
   KeyValueStore get _store => ref.read(keyValueStoreProvider);
 
@@ -51,6 +64,9 @@ class SettingsController extends Notifier<TunerSettings> {
       instrument:
           Instrument.values.asNameMap()[storedInstrument] ??
           defaults.instrument,
+      themeMode:
+          ThemeMode.values.asNameMap()[_store.getString(themeModeKey)] ??
+          defaults.themeMode,
     );
   }
 
@@ -69,6 +85,12 @@ class SettingsController extends Notifier<TunerSettings> {
     if (instrument == state.instrument) return;
     state = state.copyWith(instrument: instrument);
     await _store.setString(instrumentKey, instrument.name);
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    if (mode == state.themeMode) return;
+    state = state.copyWith(themeMode: mode);
+    await _store.setString(themeModeKey, mode.name);
   }
 
   static bool _validA4(double a4) =>
