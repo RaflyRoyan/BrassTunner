@@ -4,6 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/app_localizations.dart';
 import '../drone/application/drone_controller.dart';
 import '../drone/presentation/drone_page.dart';
+import '../fingering/presentation/fingering_chart_page.dart';
+import '../history/application/history_controller.dart';
+import '../history/presentation/history_page.dart';
+import '../../shared/platform/screen_wake_lock.dart';
+import '../lip_slur/presentation/lip_slur_page.dart';
 import '../long_tone/presentation/long_tone_page.dart';
 import '../metronome/application/metronome_controller.dart';
 import '../metronome/presentation/metronome_page.dart';
@@ -14,10 +19,11 @@ import '../tuner/presentation/tuner_screen.dart';
 enum HomeTab {
   tuner,
   longTone,
+  lipSlur,
   drone,
   metronome;
 
-  bool get needsMic => this == tuner || this == longTone;
+  bool get needsMic => this == tuner || this == longTone || this == lipSlur;
 }
 
 /// Bottom-navigation shell. Owns the mic lifecycle: listening only on tabs
@@ -37,6 +43,15 @@ class _HomeShellState extends ConsumerState<HomeShell> {
   @override
   void initState() {
     super.initState();
+    // Starts recording practice sessions in the background.
+    ref.read(sessionRecorderProvider);
+    // Screen stays on exactly while the mic is listening.
+    final wakeLock = ref.read(screenWakeLockProvider);
+    ref.listenManual(
+      tunerControllerProvider.select((s) => s.status == TunerStatus.listening),
+      (_, listening) => wakeLock.setEnabled(listening),
+      fireImmediately: true,
+    );
     _lifecycle = AppLifecycleListener(
       onShow: () {
         _visible = true;
@@ -83,6 +98,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
     final titles = {
       HomeTab.tuner: l10n.appTitle,
       HomeTab.longTone: l10n.tabLongTone,
+      HomeTab.lipSlur: l10n.tabLipSlur,
       HomeTab.drone: l10n.tabDrone,
       HomeTab.metronome: l10n.tabMetronome,
     };
@@ -91,6 +107,22 @@ class _HomeShellState extends ConsumerState<HomeShell> {
       appBar: AppBar(
         title: Text(titles[_tab]!),
         actions: [
+          IconButton(
+            tooltip: l10n.fingeringChartTitle,
+            icon: const Icon(Icons.table_chart_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const FingeringChartPage(),
+              ),
+            ),
+          ),
+          IconButton(
+            tooltip: l10n.historyTitle,
+            icon: const Icon(Icons.history),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const HistoryPage()),
+            ),
+          ),
           IconButton(
             tooltip: l10n.settingsTitle,
             icon: const Icon(Icons.settings_outlined),
@@ -104,6 +136,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
         child: switch (_tab) {
           HomeTab.tuner => const TunerPage(),
           HomeTab.longTone => const LongTonePage(),
+          HomeTab.lipSlur => const LipSlurPage(),
           HomeTab.drone => const DronePage(),
           HomeTab.metronome => const MetronomePage(),
         },
@@ -119,6 +152,10 @@ class _HomeShellState extends ConsumerState<HomeShell> {
           NavigationDestination(
             icon: const Icon(Icons.show_chart),
             label: l10n.tabLongTone,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.stairs_outlined),
+            label: l10n.tabLipSlur,
           ),
           NavigationDestination(
             icon: const Icon(Icons.graphic_eq),

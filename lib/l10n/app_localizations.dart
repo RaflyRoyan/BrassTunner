@@ -350,17 +350,59 @@ abstract class AppLocalizations {
   /// **'Saat drone berbunyi dari speaker, tuner ikut mendengarnya. Pakai earphone jika ingin melihat intonasi Anda sendiri.'**
   String get droneFeedbackHint;
 
-  /// No description provided for @droneChip.
+  /// No description provided for @targetLabel.
   ///
   /// In id, this message translates to:
-  /// **'Drone {note}'**
-  String droneChip(String note);
+  /// **'Target'**
+  String get targetLabel;
 
-  /// No description provided for @stopDrone.
+  /// No description provided for @chooseTarget.
   ///
   /// In id, this message translates to:
-  /// **'Hentikan drone'**
-  String get stopDrone;
+  /// **'Pilih nada target'**
+  String get chooseTarget;
+
+  /// No description provided for @lowerSemitone.
+  ///
+  /// In id, this message translates to:
+  /// **'Turun setengah nada'**
+  String get lowerSemitone;
+
+  /// No description provided for @raiseSemitone.
+  ///
+  /// In id, this message translates to:
+  /// **'Naik setengah nada'**
+  String get raiseSemitone;
+
+  /// No description provided for @chartInput.
+  ///
+  /// In id, this message translates to:
+  /// **'Input (Anda)'**
+  String get chartInput;
+
+  /// No description provided for @chartOutput.
+  ///
+  /// In id, this message translates to:
+  /// **'Output (target)'**
+  String get chartOutput;
+
+  /// No description provided for @targetDiffCents.
+  ///
+  /// In id, this message translates to:
+  /// **'Selisih target: {value}¢'**
+  String targetDiffCents(String value);
+
+  /// No description provided for @targetDiffSemitones.
+  ///
+  /// In id, this message translates to:
+  /// **'Selisih target: {value} semiton'**
+  String targetDiffSemitones(String value);
+
+  /// No description provided for @earphoneHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Pakai earphone agar tuner tidak ikut mendengar bunyi target.'**
+  String get earphoneHint;
 
   /// No description provided for @slower.
   ///
@@ -397,6 +439,72 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'Tambah ketukan'**
   String get moreBeats;
+
+  /// No description provided for @meterSingle.
+  ///
+  /// In id, this message translates to:
+  /// **'Satu birama'**
+  String get meterSingle;
+
+  /// No description provided for @meterMulti.
+  ///
+  /// In id, this message translates to:
+  /// **'Multi birama'**
+  String get meterMulti;
+
+  /// No description provided for @segmentTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Bagian {index}'**
+  String segmentTitle(int index);
+
+  /// No description provided for @barsCount.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} birama'**
+  String barsCount(int count);
+
+  /// No description provided for @fewerBars.
+  ///
+  /// In id, this message translates to:
+  /// **'Kurangi birama'**
+  String get fewerBars;
+
+  /// No description provided for @moreBars.
+  ///
+  /// In id, this message translates to:
+  /// **'Tambah birama'**
+  String get moreBars;
+
+  /// No description provided for @beatUnit.
+  ///
+  /// In id, this message translates to:
+  /// **'Nilai ketukan'**
+  String get beatUnit;
+
+  /// No description provided for @addSegment.
+  ///
+  /// In id, this message translates to:
+  /// **'Tambah bagian'**
+  String get addSegment;
+
+  /// No description provided for @removeSegment.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus bagian'**
+  String get removeSegment;
+
+  /// No description provided for @programPosition.
+  ///
+  /// In id, this message translates to:
+  /// **'Bagian {part} · {signature} · birama {bar}/{bars}'**
+  String programPosition(int part, String signature, int bar, int bars);
+
+  /// No description provided for @programSummary.
+  ///
+  /// In id, this message translates to:
+  /// **'Total {count} birama, lalu diulang dari awal tanpa berhenti. BPM dihitung per ketukan.'**
+  String programSummary(int count);
 
   /// No description provided for @longToneHint.
   ///
@@ -445,6 +553,312 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'{value} dtk'**
   String secondsValue(String value);
+
+  /// No description provided for @tabLipSlur.
+  ///
+  /// In id, this message translates to:
+  /// **'Lip slur'**
+  String get tabLipSlur;
+
+  /// No description provided for @fingeringChartTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Tabel penjarian'**
+  String get fingeringChartTitle;
+
+  /// No description provided for @fingeringOpen.
+  ///
+  /// In id, this message translates to:
+  /// **'Terbuka'**
+  String get fingeringOpen;
+
+  /// Posisi slide trombon 1–7
+  ///
+  /// In id, this message translates to:
+  /// **'Posisi {position}'**
+  String slidePosition(int position);
+
+  /// Label aksesibilitas penjarian, mis. Valve 1-3
+  ///
+  /// In id, this message translates to:
+  /// **'Valve {valves}'**
+  String fingeringValves(String valves);
+
+  /// No description provided for @fingeringAlternates.
+  ///
+  /// In id, this message translates to:
+  /// **'Alt: {list}'**
+  String fingeringAlternates(String list);
+
+  /// No description provided for @outOfRange.
+  ///
+  /// In id, this message translates to:
+  /// **'Di luar jangkauan alat ini'**
+  String get outOfRange;
+
+  /// No description provided for @tendencySharp.
+  ///
+  /// In id, this message translates to:
+  /// **'Cenderung sharp ~{cents}¢ ({cause})'**
+  String tendencySharp(int cents, String cause);
+
+  /// No description provided for @tendencyFlat.
+  ///
+  /// In id, this message translates to:
+  /// **'Cenderung flat ~{cents}¢ ({cause})'**
+  String tendencyFlat(int cents, String cause);
+
+  /// No description provided for @causeCombination.
+  ///
+  /// In id, this message translates to:
+  /// **'kombinasi {fingering}'**
+  String causeCombination(String fingering);
+
+  /// No description provided for @causePartial.
+  ///
+  /// In id, this message translates to:
+  /// **'partial ke-{partial}'**
+  String causePartial(int partial);
+
+  /// No description provided for @remedyExtendSlide1.
+  ///
+  /// In id, this message translates to:
+  /// **'Tarik slide valve 1.'**
+  String get remedyExtendSlide1;
+
+  /// No description provided for @remedyExtendSlide3.
+  ///
+  /// In id, this message translates to:
+  /// **'Tarik slide valve 3.'**
+  String get remedyExtendSlide3;
+
+  /// No description provided for @remedySlideOut.
+  ///
+  /// In id, this message translates to:
+  /// **'Posisikan slide sedikit lebih keluar.'**
+  String get remedySlideOut;
+
+  /// No description provided for @remedySlideIn.
+  ///
+  /// In id, this message translates to:
+  /// **'Posisikan slide sedikit lebih ke dalam.'**
+  String get remedySlideIn;
+
+  /// No description provided for @remedyHandClose.
+  ///
+  /// In id, this message translates to:
+  /// **'Tutup bell sedikit lebih rapat dengan tangan.'**
+  String get remedyHandClose;
+
+  /// No description provided for @remedyHandOpen.
+  ///
+  /// In id, this message translates to:
+  /// **'Buka tangan di bell sedikit.'**
+  String get remedyHandOpen;
+
+  /// No description provided for @remedyLipDown.
+  ///
+  /// In id, this message translates to:
+  /// **'Turunkan sedikit dengan bibir dan udara.'**
+  String get remedyLipDown;
+
+  /// No description provided for @remedyLipUp.
+  ///
+  /// In id, this message translates to:
+  /// **'Naikkan sedikit dengan bibir dan udara.'**
+  String get remedyLipUp;
+
+  /// No description provided for @tipDisclaimer.
+  ///
+  /// In id, this message translates to:
+  /// **'Kecenderungan adalah perkiraan teoretis; tiap alat bisa berbeda.'**
+  String get tipDisclaimer;
+
+  /// No description provided for @lipSlurHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Slur antar-partial tanpa mengganti penjarian. Tahan tiap nada sebentar.'**
+  String get lipSlurHint;
+
+  /// No description provided for @lipSlurFingering.
+  ///
+  /// In id, this message translates to:
+  /// **'Penjarian'**
+  String get lipSlurFingering;
+
+  /// No description provided for @lipSlurRange.
+  ///
+  /// In id, this message translates to:
+  /// **'Partial {low}–{high}'**
+  String lipSlurRange(int low, int high);
+
+  /// No description provided for @lipSlurTarget.
+  ///
+  /// In id, this message translates to:
+  /// **'Mainkan {note}'**
+  String lipSlurTarget(String note);
+
+  /// No description provided for @lipSlurDone.
+  ///
+  /// In id, this message translates to:
+  /// **'Selesai! Rata-rata ±{cents}¢'**
+  String lipSlurDone(String cents);
+
+  /// No description provided for @lipSlurMisses.
+  ///
+  /// In id, this message translates to:
+  /// **'{count, plural, =0{Tidak ada nada meleset} other{{count} kali meleset}}'**
+  String lipSlurMisses(int count);
+
+  /// No description provided for @restart.
+  ///
+  /// In id, this message translates to:
+  /// **'Ulangi'**
+  String get restart;
+
+  /// No description provided for @themeTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Tema'**
+  String get themeTitle;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In id, this message translates to:
+  /// **'Sistem'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In id, this message translates to:
+  /// **'Terang'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In id, this message translates to:
+  /// **'Gelap'**
+  String get themeDark;
+
+  /// No description provided for @historyTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Riwayat & statistik'**
+  String get historyTitle;
+
+  /// No description provided for @historyEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada sesi latihan untuk alat ini. Sesi tersimpan otomatis saat tuner, nada panjang, atau lip slur mendengar Anda bermain minimal 10 detik.'**
+  String get historyEmpty;
+
+  /// No description provided for @historyLoadError.
+  ///
+  /// In id, this message translates to:
+  /// **'Riwayat tidak dapat dimuat.'**
+  String get historyLoadError;
+
+  /// No description provided for @statSessions.
+  ///
+  /// In id, this message translates to:
+  /// **'Sesi'**
+  String get statSessions;
+
+  /// No description provided for @statTotalTime.
+  ///
+  /// In id, this message translates to:
+  /// **'Total waktu'**
+  String get statTotalTime;
+
+  /// No description provided for @statMeanDeviation.
+  ///
+  /// In id, this message translates to:
+  /// **'Rata-rata deviasi'**
+  String get statMeanDeviation;
+
+  /// No description provided for @mostSharpTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Paling sering sharp'**
+  String get mostSharpTitle;
+
+  /// No description provided for @mostFlatTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Paling sering flat'**
+  String get mostFlatTitle;
+
+  /// No description provided for @notEnoughData.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum cukup data'**
+  String get notEnoughData;
+
+  /// No description provided for @sharpShare.
+  ///
+  /// In id, this message translates to:
+  /// **'{percent} sharp · rata-rata {cents}'**
+  String sharpShare(String percent, String cents);
+
+  /// No description provided for @flatShare.
+  ///
+  /// In id, this message translates to:
+  /// **'{percent} flat · rata-rata {cents}'**
+  String flatShare(String percent, String cents);
+
+  /// No description provided for @sessionsTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Sesi latihan'**
+  String get sessionsTitle;
+
+  /// No description provided for @sessionSummary.
+  ///
+  /// In id, this message translates to:
+  /// **'{duration} · ±{cents}¢ · {count} nada'**
+  String sessionSummary(String duration, String cents, int count);
+
+  /// No description provided for @durationMinutes.
+  ///
+  /// In id, this message translates to:
+  /// **'{minutes} mnt {seconds} dtk'**
+  String durationMinutes(int minutes, int seconds);
+
+  /// No description provided for @durationHours.
+  ///
+  /// In id, this message translates to:
+  /// **'{hours} j {minutes} mnt'**
+  String durationHours(int hours, int minutes);
+
+  /// No description provided for @deleteSession.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus sesi'**
+  String get deleteSession;
+
+  /// No description provided for @deleteAll.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus semua riwayat'**
+  String get deleteAll;
+
+  /// No description provided for @deleteAllConfirm.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus semua sesi yang tersimpan? Tindakan ini tidak bisa dibatalkan.'**
+  String get deleteAllConfirm;
+
+  /// No description provided for @cancel.
+  ///
+  /// In id, this message translates to:
+  /// **'Batal'**
+  String get cancel;
+
+  /// No description provided for @delete.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus'**
+  String get delete;
 }
 
 class _AppLocalizationsDelegate

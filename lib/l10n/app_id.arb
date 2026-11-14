@@ -90,15 +90,29 @@
     }
   },
   "droneFeedbackHint": "Saat drone berbunyi dari speaker, tuner ikut mendengarnya. Pakai earphone jika ingin melihat intonasi Anda sendiri.",
-  "droneChip": "Drone {note}",
-  "@droneChip": {
+  "targetLabel": "Target",
+  "chooseTarget": "Pilih nada target",
+  "lowerSemitone": "Turun setengah nada",
+  "raiseSemitone": "Naik setengah nada",
+  "chartInput": "Input (Anda)",
+  "chartOutput": "Output (target)",
+  "targetDiffCents": "Selisih target: {value}¢",
+  "@targetDiffCents": {
     "placeholders": {
-      "note": {
+      "value": {
         "type": "String"
       }
     }
   },
-  "stopDrone": "Hentikan drone",
+  "targetDiffSemitones": "Selisih target: {value} semiton",
+  "@targetDiffSemitones": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "earphoneHint": "Pakai earphone agar tuner tidak ikut mendengar bunyi target.",
   "slower": "Lebih lambat",
   "faster": "Lebih cepat",
   "tapTempo": "Ketuk tempo",
@@ -112,6 +126,54 @@
   },
   "fewerBeats": "Kurangi ketukan",
   "moreBeats": "Tambah ketukan",
+  "meterSingle": "Satu birama",
+  "meterMulti": "Multi birama",
+  "segmentTitle": "Bagian {index}",
+  "@segmentTitle": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "barsCount": "{count} birama",
+  "@barsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fewerBars": "Kurangi birama",
+  "moreBars": "Tambah birama",
+  "beatUnit": "Nilai ketukan",
+  "addSegment": "Tambah bagian",
+  "removeSegment": "Hapus bagian",
+  "programPosition": "Bagian {part} · {signature} · birama {bar}/{bars}",
+  "@programPosition": {
+    "placeholders": {
+      "part": {
+        "type": "int"
+      },
+      "signature": {
+        "type": "String"
+      },
+      "bar": {
+        "type": "int"
+      },
+      "bars": {
+        "type": "int"
+      }
+    }
+  },
+  "programSummary": "Total {count} birama, lalu diulang dari awal tanpa berhenti. BPM dihitung per ketukan.",
+  "@programSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "longToneHint": "Tahan sebuah nada untuk mulai merekam",
   "longToneLive": "Merekam",
   "longToneLast": "Nada terakhir",
@@ -126,5 +188,197 @@
         "type": "String"
       }
     }
-  }
+  },
+  "tabLipSlur": "Lip slur",
+  "fingeringChartTitle": "Tabel penjarian",
+  "fingeringOpen": "Terbuka",
+  "slidePosition": "Posisi {position}",
+  "@slidePosition": {
+    "description": "Posisi slide trombon 1–7",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      }
+    }
+  },
+  "fingeringValves": "Valve {valves}",
+  "@fingeringValves": {
+    "description": "Label aksesibilitas penjarian, mis. Valve 1-3",
+    "placeholders": {
+      "valves": {
+        "type": "String"
+      }
+    }
+  },
+  "fingeringAlternates": "Alt: {list}",
+  "@fingeringAlternates": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfRange": "Di luar jangkauan alat ini",
+  "tendencySharp": "Cenderung sharp ~{cents}¢ ({cause})",
+  "@tendencySharp": {
+    "placeholders": {
+      "cents": {
+        "type": "int"
+      },
+      "cause": {
+        "type": "String"
+      }
+    }
+  },
+  "tendencyFlat": "Cenderung flat ~{cents}¢ ({cause})",
+  "@tendencyFlat": {
+    "placeholders": {
+      "cents": {
+        "type": "int"
+      },
+      "cause": {
+        "type": "String"
+      }
+    }
+  },
+  "causeCombination": "kombinasi {fingering}",
+  "@causeCombination": {
+    "placeholders": {
+      "fingering": {
+        "type": "String"
+      }
+    }
+  },
+  "causePartial": "partial ke-{partial}",
+  "@causePartial": {
+    "placeholders": {
+      "partial": {
+        "type": "int"
+      }
+    }
+  },
+  "remedyExtendSlide1": "Tarik slide valve 1.",
+  "remedyExtendSlide3": "Tarik slide valve 3.",
+  "remedySlideOut": "Posisikan slide sedikit lebih keluar.",
+  "remedySlideIn": "Posisikan slide sedikit lebih ke dalam.",
+  "remedyHandClose": "Tutup bell sedikit lebih rapat dengan tangan.",
+  "remedyHandOpen": "Buka tangan di bell sedikit.",
+  "remedyLipDown": "Turunkan sedikit dengan bibir dan udara.",
+  "remedyLipUp": "Naikkan sedikit dengan bibir dan udara.",
+  "tipDisclaimer": "Kecenderungan adalah perkiraan teoretis; tiap alat bisa berbeda.",
+  "lipSlurHint": "Slur antar-partial tanpa mengganti penjarian. Tahan tiap nada sebentar.",
+  "lipSlurFingering": "Penjarian",
+  "lipSlurRange": "Partial {low}–{high}",
+  "@lipSlurRange": {
+    "placeholders": {
+      "low": {
+        "type": "int"
+      },
+      "high": {
+        "type": "int"
+      }
+    }
+  },
+  "lipSlurTarget": "Mainkan {note}",
+  "@lipSlurTarget": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "lipSlurDone": "Selesai! Rata-rata ±{cents}¢",
+  "@lipSlurDone": {
+    "placeholders": {
+      "cents": {
+        "type": "String"
+      }
+    }
+  },
+  "lipSlurMisses": "{count, plural, =0{Tidak ada nada meleset} other{{count} kali meleset}}",
+  "@lipSlurMisses": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "restart": "Ulangi",
+  "themeTitle": "Tema",
+  "themeSystem": "Sistem",
+  "themeLight": "Terang",
+  "themeDark": "Gelap",
+  "historyTitle": "Riwayat & statistik",
+  "historyEmpty": "Belum ada sesi latihan untuk alat ini. Sesi tersimpan otomatis saat tuner, nada panjang, atau lip slur mendengar Anda bermain minimal 10 detik.",
+  "historyLoadError": "Riwayat tidak dapat dimuat.",
+  "statSessions": "Sesi",
+  "statTotalTime": "Total waktu",
+  "statMeanDeviation": "Rata-rata deviasi",
+  "mostSharpTitle": "Paling sering sharp",
+  "mostFlatTitle": "Paling sering flat",
+  "notEnoughData": "Belum cukup data",
+  "sharpShare": "{percent} sharp · rata-rata {cents}",
+  "@sharpShare": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      },
+      "cents": {
+        "type": "String"
+      }
+    }
+  },
+  "flatShare": "{percent} flat · rata-rata {cents}",
+  "@flatShare": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      },
+      "cents": {
+        "type": "String"
+      }
+    }
+  },
+  "sessionsTitle": "Sesi latihan",
+  "sessionSummary": "{duration} · ±{cents}¢ · {count} nada",
+  "@sessionSummary": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      },
+      "cents": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "durationMinutes": "{minutes} mnt {seconds} dtk",
+  "@durationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "durationHours": "{hours} j {minutes} mnt",
+  "@durationHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteSession": "Hapus sesi",
+  "deleteAll": "Hapus semua riwayat",
+  "deleteAllConfirm": "Hapus semua sesi yang tersimpan? Tindakan ini tidak bisa dibatalkan.",
+  "cancel": "Batal",
+  "delete": "Hapus"
 }
