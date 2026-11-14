@@ -73,7 +73,7 @@ void main() {
 
   test('emits metronome beats', () async {
     final beats = <int>[];
-    audio.beats.listen(beats.add);
+    audio.beats.listen((b) => beats.add(b.beatInBar));
     audio.engine.metronome
       ..beatsPerBar = 4
       ..start();

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/synth/metronome_voice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../application/metronome_controller.dart';
+import '../domain/bar_program.dart';
 
 class MetronomePage extends ConsumerWidget {
   const MetronomePage({super.key});
@@ -14,15 +15,42 @@ class MetronomePage extends ConsumerWidget {
     final theme = Theme.of(context);
     final metronome = ref.watch(metronomeProvider);
     final controller = ref.read(metronomeProvider.notifier);
-    final beat = metronome.running
+    final event = metronome.running
         ? ref.watch(metronomeBeatProvider).value
         : null;
+    final program = metronome.program;
+    // Where the program is now: from the last click, else its start.
+    final position = metronome.multiBar
+        ? program.locate(event?.bar ?? 0)
+        : null;
+    final segment = position == null
+        ? null
+        : program.segments[position.segment];
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
+    final list = ListView(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       children: [
         const SizedBox(height: 8),
-        _BeatDots(count: metronome.beatsPerBar, current: beat),
+        _BeatDots(
+          count: segment?.beats ?? metronome.beatsPerBar,
+          current: event?.beatInBar,
+        ),
+        if (position != null && segment != null) ...[
+          const SizedBox(height: 12),
+          Text(
+            l10n.programPosition(
+              position.segment + 1,
+              segment.signature,
+              position.barInSegment + 1,
+              segment.bars,
+            ),
+            key: const Key('programPosition'),
+            textAlign: TextAlign.center,
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: theme.colorScheme.primary,
+            ),
+          ),
+        ],
         const SizedBox(height: 24),
         Text(
           '${metronome.bpm}',
@@ -71,33 +99,75 @@ class MetronomePage extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 24),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton.filledTonal(
-              tooltip: l10n.fewerBeats,
-              onPressed: metronome.beatsPerBar > 1
-                  ? () => controller.setBeatsPerBar(metronome.beatsPerBar - 1)
-                  : null,
-              icon: const Icon(Icons.remove),
-            ),
-            SizedBox(
-              width: 200,
-              child: Text(
-                l10n.beatsPerBar(metronome.beatsPerBar),
-                textAlign: TextAlign.center,
-                style: theme.textTheme.titleMedium,
+        Center(
+          child: SegmentedButton<bool>(
+            segments: [
+              ButtonSegment(value: false, label: Text(l10n.meterSingle)),
+              ButtonSegment(value: true, label: Text(l10n.meterMulti)),
+            ],
+            selected: {metronome.multiBar},
+            onSelectionChanged: (s) => controller.setMultiBar(s.single),
+          ),
+        ),
+        const SizedBox(height: 16),
+        if (!metronome.multiBar)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton.filledTonal(
+                tooltip: l10n.fewerBeats,
+                onPressed: metronome.beatsPerBar > 1
+                    ? () => controller.setBeatsPerBar(metronome.beatsPerBar - 1)
+                    : null,
+                icon: const Icon(Icons.remove),
+              ),
+              SizedBox(
+                width: 200,
+                child: Text(
+                  l10n.beatsPerBar(metronome.beatsPerBar),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleMedium,
+                ),
+              ),
+              IconButton.filledTonal(
+                tooltip: l10n.moreBeats,
+                onPressed: metronome.beatsPerBar < MetronomeVoice.maxBeatsPerBar
+                    ? () => controller.setBeatsPerBar(metronome.beatsPerBar + 1)
+                    : null,
+                icon: const Icon(Icons.add),
+              ),
+            ],
+          )
+        else ...[
+          for (var i = 0; i < program.segments.length; i++)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: _SegmentCard(
+                index: i,
+                segment: program.segments[i],
+                active: metronome.running && position?.segment == i,
+                canRemove: program.segments.length > 1,
+                onChanged: (s) => controller.updateSegment(i, s),
+                onRemove: () => controller.removeSegment(i),
               ),
             ),
-            IconButton.filledTonal(
-              tooltip: l10n.moreBeats,
-              onPressed: metronome.beatsPerBar < MetronomeVoice.maxBeatsPerBar
-                  ? () => controller.setBeatsPerBar(metronome.beatsPerBar + 1)
+          Center(
+            child: TextButton.icon(
+              onPressed: program.segments.length < BarProgram.maxSegments
+                  ? controller.addSegment
                   : null,
               icon: const Icon(Icons.add),
+              label: Text(l10n.addSegment),
             ),
-          ],
-        ),
+          ),
+          Text(
+            l10n.programSummary(program.totalBars),
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
         const SizedBox(height: 8),
         Row(
           children: [
@@ -111,14 +181,176 @@ class MetronomePage extends ConsumerWidget {
             const Icon(Icons.volume_up),
           ],
         ),
-        const SizedBox(height: 16),
-        FilledButton.icon(
-          style: FilledButton.styleFrom(minimumSize: const Size(0, 56)),
-          onPressed: controller.toggle,
-          icon: Icon(metronome.running ? Icons.stop : Icons.play_arrow),
-          label: Text(metronome.running ? l10n.stop : l10n.play),
+      ],
+    );
+
+    // Play stays pinned below the list, so a long program never pushes it
+    // out of reach.
+    return Column(
+      children: [
+        Expanded(child: list),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          child: SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              style: FilledButton.styleFrom(minimumSize: const Size(0, 56)),
+              onPressed: controller.toggle,
+              icon: Icon(metronome.running ? Icons.stop : Icons.play_arrow),
+              label: Text(metronome.running ? l10n.stop : l10n.play),
+            ),
+          ),
         ),
       ],
+    );
+  }
+}
+
+/// One part of the multi-bar program: time signature and length in bars.
+class _SegmentCard extends StatelessWidget {
+  const _SegmentCard({
+    required this.index,
+    required this.segment,
+    required this.active,
+    required this.canRemove,
+    required this.onChanged,
+    required this.onRemove,
+  });
+
+  final int index;
+  final BarSegment segment;
+
+  /// The metronome is playing this part right now.
+  final bool active;
+  final bool canRemove;
+  final ValueChanged<BarSegment> onChanged;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    const compact = VisualDensity.compact;
+
+    return Card.outlined(
+      key: Key('segment$index'),
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: active ? scheme.primary : scheme.outlineVariant,
+          width: active ? 2 : 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.segmentTitle(index + 1),
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: active ? scheme.primary : scheme.onSurfaceVariant,
+                    ),
+                  ),
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      // Time signature: numerator stepper + unit menu.
+                      IconButton(
+                        visualDensity: compact,
+                        tooltip: l10n.fewerBeats,
+                        onPressed: segment.beats > 1
+                            ? () => onChanged(
+                                segment.copyWith(beats: segment.beats - 1),
+                              )
+                            : null,
+                        icon: const Icon(Icons.remove),
+                      ),
+                      PopupMenuButton<int>(
+                        tooltip: l10n.beatUnit,
+                        initialValue: segment.unit,
+                        onSelected: (unit) =>
+                            onChanged(segment.copyWith(unit: unit)),
+                        itemBuilder: (_) => [
+                          for (final unit in BarSegment.units)
+                            PopupMenuItem(
+                              value: unit,
+                              child: Text('${segment.beats}/$unit'),
+                            ),
+                        ],
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                segment.signature,
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  fontFeatures: const [
+                                    FontFeature.tabularFigures(),
+                                  ],
+                                ),
+                              ),
+                              const Icon(Icons.arrow_drop_down, size: 20),
+                            ],
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        visualDensity: compact,
+                        tooltip: l10n.moreBeats,
+                        onPressed: segment.beats < BarSegment.maxBeats
+                            ? () => onChanged(
+                                segment.copyWith(beats: segment.beats + 1),
+                              )
+                            : null,
+                        icon: const Icon(Icons.add),
+                      ),
+                      const SizedBox(width: 8),
+                      // Length in bars.
+                      IconButton(
+                        visualDensity: compact,
+                        tooltip: l10n.fewerBars,
+                        onPressed: segment.bars > 1
+                            ? () => onChanged(
+                                segment.copyWith(bars: segment.bars - 1),
+                              )
+                            : null,
+                        icon: const Icon(Icons.remove),
+                      ),
+                      Text(
+                        '× ${l10n.barsCount(segment.bars)}',
+                        style: theme.textTheme.titleMedium,
+                      ),
+                      IconButton(
+                        visualDensity: compact,
+                        tooltip: l10n.moreBars,
+                        onPressed: segment.bars < BarSegment.maxBars
+                            ? () => onChanged(
+                                segment.copyWith(bars: segment.bars + 1),
+                              )
+                            : null,
+                        icon: const Icon(Icons.add),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              tooltip: l10n.removeSegment,
+              onPressed: canRemove ? onRemove : null,
+              icon: const Icon(Icons.delete_outline),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

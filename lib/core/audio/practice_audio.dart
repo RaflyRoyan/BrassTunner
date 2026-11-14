@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_pcm_sound/flutter_pcm_sound.dart';
 
+import '../synth/metronome_voice.dart';
 import '../synth/synth_engine.dart';
 
 /// Speaker output that pulls PCM through a feed callback.
@@ -56,14 +57,14 @@ class PracticeAudio {
   final SynthEngine engine;
   final PcmSink _sink;
 
-  final _beats = StreamController<int>.broadcast();
+  final _beats = StreamController<BeatEvent>.broadcast();
   final _beatTimers = <Timer>{};
 
   bool _active = false;
   Future<void>? _starting;
 
-  /// Beat-in-bar of each click, emitted roughly when it is heard.
-  Stream<int> get beats => _beats.stream;
+  /// Each click (beat in bar and bar count), emitted roughly when heard.
+  Stream<BeatEvent> get beats => _beats.stream;
 
   bool get isActive => _active;
 
@@ -102,7 +103,7 @@ class PracticeAudio {
       late final Timer timer;
       timer = Timer(delay, () {
         _beatTimers.remove(timer);
-        if (!_beats.isClosed) _beats.add(beat.beatInBar);
+        if (!_beats.isClosed) _beats.add(beat);
       });
       _beatTimers.add(timer);
     }

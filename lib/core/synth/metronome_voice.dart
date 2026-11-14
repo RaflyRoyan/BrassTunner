@@ -3,10 +3,17 @@ import 'dart:typed_data';
 
 /// A click that starts [frameOffset] frames into a rendered block.
 class BeatEvent {
-  const BeatEvent({required this.beatInBar, required this.frameOffset});
+  const BeatEvent({
+    required this.beatInBar,
+    required this.frameOffset,
+    this.bar = 0,
+  });
 
   /// 0 = first (accented) beat of the bar.
   final int beatInBar;
+
+  /// Bars completed since start (or since the bar pattern changed).
+  final int bar;
   final int frameOffset;
 }
 
@@ -37,7 +44,9 @@ class MetronomeVoice {
   bool _running = false;
   int _position = 0;
   double _nextBeat = 0;
-  int _beat = 0;
+  int _beat = 0; // beat within the current bar
+  int _bar = 0;
+  List<int>? _barPattern;
   Float32List? _click;
   int _clickIndex = 0;
 
@@ -65,7 +74,30 @@ class MetronomeVoice {
   int get beatsPerBar => _beatsPerBar;
   set beatsPerBar(int value) {
     _beatsPerBar = value.clamp(1, maxBeatsPerBar);
+    _restartBars();
+  }
+
+  /// Clicks per bar for a sequence of bars played in order and repeated,
+  /// e.g. `[4, 4, 3, 3, 3]`. Overrides [beatsPerBar]; null switches back.
+  /// Changing it restarts from the first bar on the next click.
+  List<int>? get barPattern => _barPattern;
+  set barPattern(List<int>? pattern) {
+    _barPattern = pattern == null || pattern.isEmpty
+        ? null
+        : List.unmodifiable([
+            for (final b in pattern) b.clamp(1, maxBeatsPerBar),
+          ]);
+    _restartBars();
+  }
+
+  int get _currentBarBeats {
+    final pattern = _barPattern;
+    return pattern == null ? _beatsPerBar : pattern[_bar % pattern.length];
+  }
+
+  void _restartBars() {
     _beat = 0; // next click starts a new bar
+    _bar = 0;
   }
 
   void start() {
@@ -73,7 +105,7 @@ class MetronomeVoice {
     _running = true;
     _position = 0;
     _nextBeat = 0;
-    _beat = 0;
+    _restartBars();
   }
 
   void stop() => _running = false;
@@ -84,13 +116,19 @@ class MetronomeVoice {
     if (isSilent) return;
     for (var i = 0; i < buffer.length; i++) {
       if (_running && _position >= _nextBeat) {
-        final beatInBar = _beat % _beatsPerBar;
-        _click = beatInBar == 0 && _beatsPerBar > 1
+        final barBeats = _currentBarBeats;
+        final beatInBar = _beat;
+        // In a bar pattern even 1-beat bars are accented, so bar lines stay
+        // audible.
+        _click = beatInBar == 0 && (barBeats > 1 || _barPattern != null)
             ? _accentClick
             : _normalClick;
         _clickIndex = 0;
-        events.add(BeatEvent(beatInBar: beatInBar, frameOffset: i));
-        _beat++;
+        events.add(BeatEvent(beatInBar: beatInBar, frameOffset: i, bar: _bar));
+        if (++_beat >= barBeats) {
+          _beat = 0;
+          _bar++;
+        }
         _nextBeat += _framesPerBeat;
       }
       final click = _click;
